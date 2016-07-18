@@ -96,9 +96,9 @@ European People's Party (Christian Democrats) and European Democrats & EPP-ED & 
 Socialist Group in the European Parliament & PES & 217 & Socialist\\
 Alliance of Liberals and Democrats for Europe & ALDE & 104 & Liberal\\
 Union for Europe of the Nations Group & UEN & 40 & Nationalist\\
-Greens/European Free Alliance & G-EFA & 43 & Green\\
-Confederal Group of the European United Left/Nordic Green Left & EUL-NGL & 41 & Radical Left\\
-Independence/Democracy Group & IND-DEM & 22 & Eurosceptic\\
+Greens / European Free Alliance & G/EFA & 43 & Green\\
+Confederal Group of the European United Left / Nordic Green Left & EUL/NGL & 41 & Radical Left\\
+Independence / Democracy Group & IND/DEM & 22 & Eurosceptic\\
 Non-attached Members & NI & 30 & Various\\
 \hline
 \end{tabu}
@@ -187,7 +187,7 @@ The 6th term began in 2004, and ended in 2009. In total there are records for 89
 
 \begin{figure}[!h]
 \includegraphics[width=\textwidth]{figures/term6.pdf}
-\caption{Overview of visualisations built on 6th Term voting records. Points are coloured by group.}
+\caption{Overview of visualisations built on 6th Term voting records. Points are in clusters coloured by group.}
 \label{fig:allmethods6}
 \end{figure}
 
@@ -232,7 +232,7 @@ The 6th term began in 2004, and ended in 2009. In total there are records for 89
 \bottomrule
 \end{tabu}
 \vskip 1em
-\caption{BGSS - Between Group Scatter, using votes from the 6th Term. Larger values indicate greater separation between clusters of MEPs}
+\caption{BGSS - Between Group Scatter, using votes from the 6th Term. Larger values indicate greater separation between clusters of MEPs.}
 \end{table}
 
 
@@ -244,7 +244,7 @@ The 7th parliament was elected in 2009 and finished in 2014. Between the 7th and
 
 \begin{figure}[!h]
 \includegraphics[width=\textwidth]{figures/term7.pdf}
-\caption{Overview of visualisations built on 7th Term voting records. Points are coloured by group.}
+\caption{Overview of visualisations built on 7th Term voting records. Points are in clusters coloured by group.}
 \label{fig:allmethods7}
 \end{figure}
 
@@ -288,7 +288,7 @@ The 7th parliament was elected in 2009 and finished in 2014. Between the 7th and
 \bottomrule
 \end{tabu}
 \vskip 1em
-\caption{BGSS - Between Group Scatter, using votes from the 7th Term. Larger values indicate greater separation between clusters of MEPs}
+\caption{BGSS - Between Group Scatter, using votes from the 7th Term. Larger values indicate greater separation between clusters of MEPs.}
 \end{table}
 
 %\begin{figure}[!h]
@@ -313,7 +313,7 @@ While the methods we explore do not out perform the well established and widely 
 
 Many techniques are applicable if we treat roll call vote scaling as a dimensionality reduction problem. All methods that aim to project or embed high dimensional data in a low dimensional space introduce some uncertainty and instability. Uncertainty in point estimates can come from many sources: from data quality issues and encoding schemes, to parameter and initialization choices, to visualisation choices. Given these issues, one advantage that the alternative methods we explored have is their speed and efficiency: multiple runs under different settings can highlight errors in ideal point estimates more clearly.
 
-In terms of evaluation, expert surveys\cite{mcelroy2012policy} or coded party manifestos\cite{manifesto} may offer better benchmarks for differences between groups and MEPs. Producing annotations and expert surveys is a costly task however, and there are currently no expert judgements or annotations available for all votes for a full term.
+In terms of evaluation, expert surveys \cite{mcelroy2012policy} or coded party manifestos \cite{manifesto} may offer better benchmarks for differences between groups and MEPs. Producing annotations and expert surveys is a costly task however, and there are currently no expert judgements or annotations available for all votes for a full term.
 
 \section{Conclusion}
 We applied several commonly used dimensionality reduction techniques to voting records in the EU parliament. While all techniques tend to exaggerate distances between MEPs of the same group, they can perhaps be useful for quantifying within-party differences, or treating cluster centroids as points---similarities between groups.
