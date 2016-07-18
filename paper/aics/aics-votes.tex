@@ -26,34 +26,56 @@ School of Politics \& International Relations, University College Dublin, Irelan
 \maketitle
 
 \begin{abstract}
-Recorded votes in legislative bodies are an important source of data for political scientists. Voting records can be used to describe parliamentary processes, identify ideological divides between members and reveal the strength of party cohesion. We explore the problem of working with vote data using popular dimensionality reduction techniques and cluster validation methods, as an alternative to traditional \emph{scaling} techniques. We present results of dimensionality reduction techniques applied to votes from the 6th and 7th European Parliaments, covering activity from 2004 to 2014.
+Recorded votes in legislative bodies are an important source of data for political scientists. Voting records can be used to describe parliamentary processes, identify ideological divides between members and reveal the strength of party cohesion. We explore the problem of working with vote data using popular dimensionality reduction techniques and cluster validation methods, as an alternative to more traditional \emph{scaling} techniques. We present results of dimensionality reduction techniques applied to votes from the 6th and 7th European Parliaments, covering activity from 2004 to 2014.
 \end{abstract}
 
 \section{Introduction}
-As a law making body, votes passed in the European Parliament (EP) can have significant influence on citizens across the European Union. Members of the European Parliament (MEPs) hold power over the majority of EU legislation, as well as decisions on budgets and spending. Analysis of votes is not only of interest to researchers, but many interest groups and industries operating within the EU. To produce insights into legislation and party politics computational approaches are highly dependant on latent variable models---using point estimates to make sense of and test theories using voting records\cite{hix2006dim}, speeches\cite{proksch2010position}, party manifestos\cite{manifesto}, expert surveys\cite{mcelroy2012policy}, and more recently social media\cite{Barbera2014}.
+As a law making body, votes passed in the European Parliament (EP) can have significant influence on citizens across the European Union. Members of the European Parliament (MEPs) hold power over the majority of EU legislation, as well as decisions on budgets and spending. Analysis of votes is not only of interest to researchers, but many interest groups and industries operating within the EU. To produce insights into legislation and party politics computational approaches are highly dependant on latent variable models---using point estimates to make sense of and test theories using voting records \cite{hix2006dim}, speeches \cite{proksch2010position}, party manifestos \cite{manifesto}, expert survey s\cite{mcelroy2012policy}, and more recently social media data \cite{Barbera2014}.
 
 A common theme in these models is the low dimensional reconstruction of high-dimensional data. Roll call votes, where the vote of each member is recorded are typically represented as a matrix of legislators with \emph{for} and \emph{against} votes, treating abstentions as missing values. Legislators, in this case MEPs, are represented as vectors in $d$ dimensions, where each dimension encodes a vote in some way. \emph{Scaling} methods are then applied to recover point estimates or produce visualisations. Scaling methods essentially perform dimensionality reduction, transforming data in a high-dimensional space to a space with fewer dimensions---an $n$ dimensional space $\mathbb{R}^n$ where $n << d$, typically 2 or 3 dimensions are used to produce interpretable visualisations.
 
-While established methods for inductive scaling of roll call votes exist, there are many other potential alternatives that remain unexplored. We describe 4 such alternatives in Section \ref{sec:methods} and formulate a cluster quality based evaluation approach, highlighting advantages and drawbacks of each.
+While established methods for inductive scaling of roll call votes exist, there are many other potential alternatives that remain unexplored. We describe four such alternatives in Section \ref{sec:methods}. and formulate a cluster quality-based evaluation approach, highlighting advantages and drawbacks of each method. We make the data for 6th and 7th EU parliaments and Python code to reproduce the approaches on different sets of voting records are made available online\footnote{\url{https://github.com/igorbrigadir/vote2vec}}, so that political science researchers can explore these alternative approaches when analysing vote data.
 
 \section{Related Work}
 \label{sec:relatedwork}
 
 The NOMINATE \cite{poole2000congress} family of multidimensional scaling approaches are the most widely adopted methods for estimating ideal points from roll call data, and have been applied to European Parliament roll call vote data in \cite{hix2006dim} where the main policy dimensions based on this data reveal a dominant left-right dimension, as well as evidence of a pro-/anti-Europe dimension.
-
 The results of scaling are often used as features for downstream tasks, such as \cite{mcelroy2012policy} where ideal points are used as features in estimating party influence. In \cite{gabel2007preferences} roll call votes are compared to survey responses.
 
-\emph{Scaling} using text from speeches\cite{proksch2010position} can be related to the broader task of dimensionality reduction \cite{lowe2013there}. Popular scaling methods include Wordfish \cite{wordfish}, and Wordscores \cite{wordscores2003}. The Wordfish model is applied to EP debates in \cite{proksch2010position}. While strong evidence for left-right ideology was not found in the speeches, the results suggest that legislators express ideology differently through speaking and voting. In \cite{GuTF} the voting records are combined with text contained in US House and Senate data, with ideal points estimated per topic such as health, military or education.
+\emph{Scaling} using text from speeches \cite{proksch2010position} can be related to the broader task of dimensionality reduction \cite{lowe2013there}. Popular scaling methods include Wordfish \cite{wordfish}, and Wordscores \cite{wordscores2003}. The Wordfish model is applied to EP debates in \cite{proksch2010position}. While strong evidence for left-right ideology was not found in the speeches, the results suggest that legislators express ideology differently through speaking and voting. In \cite{GuTF} the voting records are combined with text contained in US House and Senate data, with ideal points estimated for topics such as health, military, and education.
 
-What all these approaches share is a strong domain specific focus: scaling approaches like W-NOMINATE\cite{wnominate} are developed to deal with roll call votes and not any other kind of application. We propose adopting methods not commonly used with roll call data, but widely used in general in many different domains.
+What all these approaches share is a strong domain-specific focus: scaling approaches like W-NOMINATE\cite{wnominate} are developed specifically to deal with roll call votes and not any other kind of data. We propose adapting dimensionality reduction methods which are not commonly used with roll call data, but have been previously shown to be effective elsewhere and are widely used across many other domains.
 
 \section{Methods}
 \label{sec:methods}
 
-We cast the problem of roll call vote analysis as a dimensionality reduction problem, for which a wide range of methods exist. We apply 4 methods (described below) to roll call voting records from the 6th and 7th European Parliament, testing different ways of encoding the vote matrix with different methods.
+We cast the problem of roll call vote analysis as a dimensionality reduction problem. We apply four methods (described below) to roll call voting records from the 6th and 7th European Parliament, testing alternative ways of encoding the vote data with different methods.
 
 \subsection{Voting in the EU Parliament}
 MEPs in the parliament are organised into transnational political groups. Group membership is based on ideological preferences of members from different countries, for example: Conservatives in one country will have more policies in common with conservatives in other countries, than with liberals in their own country. These groups work together to divide the workload of drafting legislation, researching policy and other activities. The groups delegate experts to work on different issues, and agree to follow their instructions on the best voting strategy. Given this organisation, MEPs have strong incentives to follow the voting patterns of their group\cite{Hix821}. The groups and their broad ideologies are summarised in Table \ref{tbl:groups}. MEPs do not always follow group voting decisions, but have strong incentives to follow their group, as the groups control allocation of resources and committee positions.
+
+\subsection{Encoding Vote Data}
+
+The EP plenary votes are publicly available and published regularly\footnote{\url{http://www.europarl.europa.eu/plenary/en/votes.html}}. Before applying techniques to roll call votes, we construct the vote matrix $X$: the high-dimensional representation of votes---where an entry contains a binary value for \emph{Yes}, \emph{No}, and optionally \emph{Abstain}, on each vote by an individual MEP. 
+
+\begin{wrapfigure}{l}{0.39\textwidth}
+\begin{center}
+\vskip -2em
+\includegraphics[width=0.38\textwidth]{figures/votematrix.pdf}
+\end{center}
+\vskip -1.5em
+\caption{Example vote matrix: MEPs 1 and 2 voted \emph{No} on Vote 1, and abstained on Vote 2.}
+\label{fig:votematrix}
+\end{wrapfigure}
+
+A small example representing this encoding for two roll call votes for three different MEPs is shown in Figure \ref{fig:votematrix}.
+
+Other potential encodings, given vote metadata and method choice are possible: a count matrix is produced by merging votes using title similarity, or policy area or committee. Detailed vote meta data is available for the 6th parliament\footnote{\url{http://personal.lse.ac.uk/hix/HixNouryRolandEPdata.htm}} from \cite{Hix821}, but is incomplete for the 7th parliament. Results are reported for vote encoding using individual votes.
+
+MEPs who switch groups\cite{evans2012measuring} during the term present a data consistency challenge for roll call analysis using our proposed evaluation measure. MEPs who follow group voting procedure of one group for a period of the term, and then switch will be correctly clustered with the group most similar to them, but mislabelled during evaluation, as voting records remain, while group affiliation can change.
+
+Every effort has been made to correct inconsistencies with data such as removing duplicate vote records and matching roll call records with MEP profiles to ensure MEPs represent the correct group at the time of the vote, but some inconsistencies may remain.
+
 
 \begin{table}[!t]
 \tiny
@@ -81,62 +103,40 @@ Non-attached Members & NI & 30 & Various\\
 \hline
 \end{tabu}
 \vskip 1em
-\caption{Group names, seats and ideology for the 6th, 7th parliamentary terms.}
+\caption{Group names, seats, and ideology for the 6th and 7th parliamentary terms.}
 \label{tbl:groups}
 \end{table}
 
-\subsection{Encoding Vote Data}
-The EP plenary votes are publicly available and published regularly\footnote{\url{http://www.europarl.europa.eu/plenary/en/votes.html}}. Before applying techniques to roll call votes, we construct the vote matrix $X$: the high-dimensional representation of votes---where an entry contains a binary value for \emph{Yes}, \emph{No}, and optionally \emph{Abstain}, on each vote by an individual MEP. A small example representing this encoding for two roll call votes for three different MEPs is shown in Figure \ref{fig:votematrix}.
 
-\begin{wrapfigure}{l}{0.25\textwidth}
-\begin{center}
-\vskip -2em
-\includegraphics[width=0.25\textwidth]{figures/votematrix.pdf}
-\end{center}
-\vskip -1em
-\caption{Example vote matrix: MEPs 1 and 2 voted \emph{No} on Vote 1, and abstained on Vote 2.}
-\label{fig:votematrix}
-\end{wrapfigure}
-
-Other potential encodings, given vote metadata and method choice are possible: a count matrix is produced by merging votes using title similarity, or policy area or committee. Detailed vote meta data is available for the 6th parliament\footnote{\url{http://personal.lse.ac.uk/hix/HixNouryRolandEPdata.htm}} from \cite{Hix821}, but is incomplete for the 7th parliament. Results are reported for vote encoding using individual votes.
-
-MEPs who switch groups\cite{evans2012measuring} during the term present a data consistency challenge for roll call analysis using our proposed evaluation measure. MEPs who follow group voting procedure of one group for a period of the term, and then switch will be correctly clustered with the group most similar to them, but mislabelled during evaluation, as voting records remain, while group affiliation can change.
-
-Every effort has been made to correct inconsistencies with data such as removing duplicate vote records and matching roll call records with MEP profiles to ensure MEPs represent the correct group at the time of the vote, but some inconsistencies may remain.
-
-\subsection{Dimensionality Reduction:}
+\subsection{Dimensionality Reduction}
 \subsubsection {W-NOMINATE:} The \underline{W}eighted \underline{Nomina}l \underline{T}hree-step \underline{E}stimation approach\cite{wnominate} is an inductive scaling technique specifically designed for ideal point estimation of legislators using roll call data.
 
 While the method is ubiquitous, a number of drawbacks are highlighted in \cite{clinton2003statistical}. Specifically: excluding some votes, which results in poorer discrimination among extremist MEPs, and excluding MEPs with short voting histories. In the 7th Parliament dataset 5 of 853 MEPs and 460 of 6961 votes are excluded with the recommended settings. The methods we propose do not exclude any MEPs or Votes, and do not require setting vote or MEP specific thresholds, however they do introduce their own method specific parameters and initialisation strategies that can affect results, and do not solve the problem of parameter tuning.
 
 \subsubsection{PCA:}
-Principle Component Analysis\cite{Fodor02DRSurvey} is a commonly used linear dimension reduction technique. PCA is performed using Singular Value Decomposition on the vote data matrix. Figures \ref{fig:allmethods6} and \ref{fig:allmethods7} show the resultant visualisations.
+Principle Component Analysis\cite{Fodor02DRSurvey} is a commonly used linear dimension reduction technique. PCA is performed using Singular Value Decomposition on the vote data matrix. Figures \ref{fig:allmethods6} and \ref{fig:allmethods7} show the resulting visualisations.
 
 \subsubsection{NMF:}
 Given a non-negative matrix $X$, Non-negative Matrix factorization\cite{nmf1} approaches find two factor matrices $W$ and $H$ where the product of $W$ and $H$ approximates $X$. The dimensions of the factor matrices are significantly lower than the product. NMF is not commonly used for visualisation, but is a popular approach for clustering\cite{nmf} and topic modelling.
 
 \subsubsection{t-SNE:}
-t Stochastic Neighbourhood Embedding is a popular dimensionality reduction and visualisation technique. Data is usually embedded in 2 or 3 dimensions, creating interpretable visualisations of high dimensional spaces. The stochastic nature of the process can sometimes produce visualisations that are drastically different, or contain structure that could be over-interpreted. For example, in a $2d$ plot, the $x$ and $y$ coordinates are not reliable values to use as point estimates in the same way as NOMINATE scores are---however, the clusters produced and relative positions of MEPs can be informative as MEPs with similar voting patterns will be clustered together. 
+t-Stochastic Neighbourhood Embedding is a popular dimensionality reduction and visualisation technique. Data is usually embedded in two or three dimensions, creating interpretable visualisations of high dimensional spaces. The stochastic nature of the process can sometimes produce visualisations that are drastically different, or contain structure that could be over-interpreted. For example, in a $2d$ plot, the $x$ and $y$ coordinates are not reliable values to use as point estimates in the same way as NOMINATE scores are---however, the clusters produced and relative positions of MEPs can be informative as MEPs with similar voting patterns will be clustered together. 
 %Figure \ref{fig:tsne} shows projections with t-SNE applied to the vote matrix $X$.
 
 \subsubsection{SGNS with t-SNE:}
 We explore a two step process, where votes and MEPs are treated as co-occurrences---embedding votes and MEPs into a lower dimensional space with Stochastic Gradient Descent with Negative Sampling\cite{levy2014neural} and then applying t-SNE to further reduce dimensionality down to 2 or 3 for visualisation.  The two step process tends to exaggerate distances between MEPs of the same group, however this method introduces more parameters and instability, making qualitative analysis difficult and prone to over interpretation---where visualisation artefacts can be interpreted as meaningful.
 
-\subsubsection{Evaluating projections:}
-In order to evaluate the quality of the low dimensional projections of MEPs, we adopt Within Group Scatter and Between Group Scatter clustering criteria. We define clusters as the parliamentary groups to which MEPs belong to. The between group scatter quantifies differences in voting behaviour between groups, while within group scatter quantifies how cohesive a group is, or rather, how strongly party discipline dictates vote behaviour\cite{Hix821}. 
+\subsection{Evaluating Projections}
+In order to evaluate the quality of the low dimensional projections of MEPs, we adopt Within Group Scatter and Between Group Scatter criteria, which have been widely used for the problem cluster validation \cite{desgraupes2013clustering}. Here we define our clusters as the parliamentary groups to which MEPs belong. The between group scatter quantifies differences in voting behaviour between groups, while within group scatter quantifies how cohesive a group is, or rather, how strongly party discipline dictates vote behaviour\cite{Hix821}. 
 
-For group $k$, Within group scatter is within group sum of squares, or $\clust{WGSS}$:
-
+For group $k$, the Within group scatter is calculates as the within group sum of squares, or $\clust{WGSS}$:
 $$
 \clust{WGSS} = \sum_{i\in I_{k}} ||\clust{M}_{i}-\clust{G}||^2
 $$
-
-where  and between group scatter or BGSS is:
-
+where $G^k$ is the centroid of group $k$. The between group scatter or BGSS is:
 $$
 BGSS=\sum_{k=1}^K n_{k}||\clust{G}-G||^2
 $$
-
 where $G^k$ is the centroid of group $k$, $G$ is the centroid of all points (representing MEPs in a $2d$ space). Small WGSS values indicate tight grouping of points in a cluster, or strong party discipline in the case of MEPs and votes. Large BGSS indicates large differences between groups.
 
 
@@ -149,7 +149,7 @@ where $G^k$ is the centroid of group $k$, $G$ is the centroid of all points (rep
 \section{Results}
 \label{sec:results}
 
-Overall, in contrast to W-NOMINATE, the other methods have the advantage of significantly faster run times, but introduce method specific initialisations and parameters, which can 
+We now compare the outputs generated by  W-NOMINATE and the alternative methods. Overall, in contrast to W-NOMINATE, the other methods have the advantage of significantly faster run times, but introduce method specific initialisations and parameters, which can 
 
 For WGSS and BGSS we exclude the non attached MEPs, as these are not members of any political group in the parliament. Ideology in the non-attached members ranges from communism, to populism, nationalism and neo-nazism.
 
@@ -179,12 +179,12 @@ While some groups are clustered more appropriately by the methods we explored, o
 \end{figure}
 
 
-\subsection{6th Term:}
+\subsection{6th Term}
 
 The 6th term began in 2004, and ended in 2009. In total there are records for 899 MEPs. MEPs sometimes join the parliament at different times, retire, or are replaced. We include an MEP in a group if they have a record of a vote in the dataset.
 
 
-\subsection{7th Term:}
+\subsection{7th Term}
 
 The 7th parliament was elected in 2009 and finished in 2014. Between the 7th and the 6th parliaments there were a number of changes made to groups, including new members and affiliation switches with existing MEPs.
 
@@ -288,8 +288,6 @@ Many techniques are applicable if we treat roll call vote scaling as a dimension
 
 \section{Conclusion}
 We applied several commonly used dimensionality reduction techniques to voting records in the EU parliament. While all techniques tend to exaggerate distances between MEPs of the same group, they can perhaps be useful for quantifying within-party differences.
-
-We make the data for 6th and 7th EU parliaments and code to reproduce the approaches on different sets of voting records are made available at: \\ \url{https://github.com/igorbrigadir/vote2vec}.
 
 Applying similar methods to speeches and using point estimates derived from our proposed methods as alternatives in downstream tasks is ongoing. 
 
