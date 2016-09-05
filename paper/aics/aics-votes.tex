@@ -6,8 +6,13 @@
 \usepackage{booktabs}
 \usepackage{tabu}
 \usepackage{tabularx}
+\usepackage[labelfont=bf]{caption}
 
 \newcommand{\clust}[2][k]{#2^{\{#1\}}}
+
+\makeatletter
+\newcommand\tablefont{\@setfontsize\tablefont{8.5pt}{8.5}}
+\makeatother
 
 % --- TITLE AND AUTHOR INFORMATION
 %\title{vote2vec: Dimensionality Reduction Toolkit for Voting Records}
@@ -78,30 +83,32 @@ Every effort has been made to correct inconsistencies with data such as removing
 
 
 \begin{table}[!t]
-\tiny
+\tablefont{
 \begin{tabu} to \textwidth { X | l | r | l}
 \emph{Name} & \emph{Abbreviation} & Seats & \emph{Ideology} \\ \hline
 \emph{7th Term 2009--2014} &  &  & \\ \hline
-European People's Party (Christian Democrats) & EPP & 274 & Conservative\\
-Progressive Alliance of Socialists and Democrats in the European Parliament & S\&D & 195 & Socialist\\
-Alliance of Liberals and Democrats for Europe & ALDE & 85 & Liberal\\
-European Conservatives and Reformists Group & ECR & 56 & Eurosceptic\\
-Greens / European Free Alliance & G-EFA & 58 & Green\\
-Confederal Group of the European United Left / Nordic Green Left & EUL-NGL & 35 & Radical Left\\
-Europe of Freedom and Direct Democracy Group & EFD & 33 & Eurosceptic\\
-Non-attached Members & NI & 30 & Various\\
+European People's Party (Christian Democrats)& EPP & 274 & Conservative\\
+Progressive Alliance of Socialists and Democrats& S\&D & 195 & Socialist\\
+Alliance of Liberals and Democrats for Europe& ALDE & 85 & Liberal\\
+European Conservatives and Reformists Group& ECR & 56 & Eurosceptic\\
+Greens / European Free Alliance& G-EFA & 58 & Green\\
+Group of the European United Left / Nordic Green Left& EUL-NGL & 35 & Radical Left\\
+Europe of Freedom and Direct Democracy Group& EFD & 33 & Eurosceptic\\
+Non-attached Members& NI & 30 & Various\\
 \hline
 \emph{6th Term 2004-2009} &  &  & \\ \hline
-European People's Party (Christian Democrats) and European Democrats & EPP-ED & 288 & Conservative\\
-Socialist Group in the European Parliament & PES & 217 & Socialist\\
-Alliance of Liberals and Democrats for Europe & ALDE & 104 & Liberal\\
-Union for Europe of the Nations Group & UEN & 40 & Nationalist\\
-Greens / European Free Alliance & G/EFA & 43 & Green\\
-Confederal Group of the European United Left / Nordic Green Left & EUL/NGL & 41 & Radical Left\\
-Independence / Democracy Group & IND/DEM & 22 & Eurosceptic\\
-Non-attached Members & NI & 30 & Various\\
+European People's Party (Christian Democrats)& EPP-ED & 288 & Conservative\\
+Socialist Group in the European Parliament& PES & 217 & Socialist\\
+Alliance of Liberals and Democrats for Europe& ALDE & 104 & Liberal\\
+Union for Europe of the Nations Group& UEN & 40 & Nationalist\\
+Greens / European Free Alliance& G/EFA & 43 & Green\\
+Group of the European United Left / Nordic Green Left& EUL/NGL & 41 & Radical Left\\
+Independence / Democracy Group& IND/DEM & 22 & Eurosceptic\\
+Non-attached Members& NI & 30 & Various\\
 \hline
 \end{tabu}
+}
+\normalsize
 \vskip 1em
 \caption{Group names, seats, and ideologies for the 6th and 7th parliamentary terms. Number of seats doesn't reflect the number of MEPs active over the entire term, as some retire, or are substituted.}
 \label{tbl:groups}
@@ -133,71 +140,95 @@ For group $k$, the within group scatter is calculated as the within group sum of
 $$
 \clust{WGSS} = \sum_{i\in I_{k}} ||\clust{M}_{i}-\clust{G}||^2
 $$
-where $G^k$ is the centroid of group $k$. The between group scatter or BGSS is:
+where $G^k$ is the centroid of group $k$. The between group scatter or $BGSS$ is:
 $$
 BGSS=\sum_{k=1}^K n_{k}||\clust{G}-G||^2
 $$
-where $G^k$ is the centroid of group $k$, $G$ is the centroid of all points (representing MEPs in a $2d$ space). Small WGSS values indicate tight grouping of points in a cluster, or strong party discipline in the case of MEPs and votes. Large BGSS indicates large differences between groups.
+where $G^k$ is the centroid of group $k$, $G$ is the centroid of all points (representing MEPs in a $2d$ space). Small $WGSS$ values indicate tight grouping of points in a cluster, or strong party discipline in the case of MEPs and votes. Large $BGSS$ indicates large differences between groups.
 
-
+%
 %For each MEP $i$, the silhouette score is: %$$ %s(i) = \frac{b(i) - a(i)}{\max\{a(i),b(i)\}} %$$ where $a(i)$ is the average distance from MEP $i$ to all other MEPs in their group, and $b(i)$ is the lowest average distance to another group cluster of which the MEP is not a member of. %$s(i)$ scores close to 1 suggest that an MEP is appropriately clustered, while scores close to $-1$ suggest that the MEP would be more appropriately placed in a different, neighbouring group. The average $s(i)$ over all MEPs in a group is a measure of how tightly grouped MEPs are in the space, or rather, how strongly party discipline dictates vote behaviour\cite{Hix821}. The average $s(i)$ score across all MEPs for all groups provides a measure of quality of a method.
-
+%
 %\subsection{Dimensions in EU Votes:}
 %Using the evaluation scores of projections built using different dimensions, we can try to investigate how many dimensions are optimal for each method. Figure \ref{fig:dim} shows that dimensionality reduction approaches work best for 2 or 3 dimensions in most cases. In previous work\cite{hix2006dim}, the main policy dimensions were a dominant left-right dimension, and a pro-/anti-Europe dimension. As we only use one kind of evaluation approach, there is not enough evidence to show that this 3rd dimension in the ``vote space'' is substantive.
-
-
+%
 \section{Results}
 \label{sec:results}
-
 We now compare the outputs generated by  W-NOMINATE and the alternative methods. Overall, in contrast to W-NOMINATE, the other methods have the advantage of significantly faster run times, but introduce method specific initialisations and parameters, which can affect visualisation output. This is most pronounced in the case of t-SNE with random initialisation, where a cluster of MEPs may be placed ``to the right'' or ``to the left'' of another group depending on the run. Initialising t-SNE with PCA produces stable arrangements of clusters in a $2d$ space, but the $x$ and $y$ values of individual MEPs are unsuitable for use as point estimates.
 
-For WGSS and BGSS we exclude the non attached MEPs, as these are not members of any political group in the parliament. Ideology in the non-attached members ranges from communism, to populism, nationalism and neo-nazism.
+For $WGSS$ and $BGSS$ we exclude the non attached MEPs, as these are not members of any political group in the parliament. Ideology in the non-attached members ranges from communism, to populism, nationalism and neo-nazism.
 
-Figure \ref{fig:wn} shows W-NOMINATE estimates that form our baseline: other approaches are compared to $WGSS$ and $BGSS$ scores derived from these results. Detailed scores by party group for the parliaments are shown in Tables \ref{tbl:6th} and \ref{tbl:7th} below.
+Figure \ref{fig:wn} shows W-NOMINATE estimates that form our baseline: other approaches are compared to $WGSS$ and $BGSS$ scores derived from these results. Detailed scores by party group for the parliaments are shown in Tables \ref{tbl:6th} and \ref{tbl:7th} below. In Figure \ref{fig:wn}, the $x$ axis is interpreted as the left/right dimension, with left wing groups such as the European United Left / Nordic Green Left (EUL/NGL) placed on the left, and right wing groups such as Europe of Freedom and Democracy (IND/DEM) on the right. The $y$ axis is interpreted as capturing a pro/anti EU integration dimension, with pro-EU groups assigned estimates close to 1 and Eurosceptic or anti-EU MEPs assigned point estimates close to -1.
 
-In Figure \ref{fig:wn}, the $x$ axis is interpreted as the left/right dimension, with left wing groups such as the European United Left–Nordic Green Left (EUL/NGL) placed on the left, and right wing groups such as Europe of Freedom and Democracy (IND/DEM) on the right. The $y$ axis is interpreted as capturing a pro/anti EU integration dimension, with pro-EU groups assigned estimates close to 1 and Eurosceptic or anti-EU MEPs assigned point estimates close to -1.
+Figures \ref{fig:allmethods6} and \ref{fig:allmethods7} show an overview of all methods applied to the 6th and 7th parliamentary terms. In contrast to W-NOMINATE, the other methods have greater within group scatter---exaggerating differences between MEPs in the same group. While some groups are clustered more appropriately by the methods we explored, overall W-NOMINATE produces the best clustering of MEPs.
 
-Figures \ref{fig:allmethods6} and \ref{fig:allmethods7} show an overview of all methods applied to the 6th and 7th parliamentary terms. In contrast to W-NOMINATE, the other methods have greater within group scatter---exaggerating differences between MEPs in the same group.
+\vskip 1em
 
-While some groups are clustered more appropriately by the methods we explored, overall W-NOMINATE produces the best clustering of MEPs.
+\noindent%
+\begin{minipage}{\linewidth}% to keep image and caption on one page
+\makebox[\linewidth]{%center image
+\begin{minipage}{0.5\textwidth}
+\centering
+\includegraphics[width=1.0\textwidth]{figures/W-NOMINATE-6th.pdf}
+\end{minipage}%
+\begin{minipage}{0.5\textwidth}
+\centering
+\includegraphics[width=1.0\textwidth]{figures/W-NOMINATE-7th.pdf}
+\end{minipage}}
+\captionof{figure}{W-NOMINATE scales for the 6th (left) and 7th (right) Parliaments.}\label{fig:wn}
+\end{minipage}
 
-\begin{figure}[!h]
-    \centering
-    \begin{minipage}{0.5\textwidth}
-        \centering
-        \includegraphics[width=1.0\textwidth]{figures/W-NOMINATE-6th.pdf}
-        %\caption{6th}
-        %\label{fig:dim6}
-    \end{minipage}%
-    \begin{minipage}{0.5\textwidth}
-        \centering
-        \includegraphics[width=1.0\textwidth]{figures/W-NOMINATE-7th.pdf}
-        %\caption{7th}
-        %\label{fig:dim7}
-    \end{minipage}
-    \caption{W-NOMINATE scales for the 6th (left) and 7th (right) Parliaments.}\label{fig:wn}
-\end{figure}
+%\begin{figure}[!h]
+%    \centering
+%    \begin{minipage}{0.5\textwidth}
+%        \centering
+%        \includegraphics[width=1.0\textwidth]{figures/W-NOMINATE-6th.pdf}
+%        %\caption{6th}
+%        %\label{fig:dim6}
+%    \end{minipage}%
+%    \begin{minipage}{0.5\textwidth}
+%        \centering
+%        \includegraphics[width=1.0\textwidth]{figures/W-NOMINATE-7th.pdf}
+%        %\caption{7th}
+%        %\label{fig:dim7}
+%    \end{minipage}
+%    \caption{W-NOMINATE scales for the 6th (left) and 7th (right) Parliaments.}\label{fig:wn}
+%\end{figure}
 
 
 \subsection{6th Term}
 
 The 6th term began in 2004, and ended in 2009. In total there are records for 899 MEPs. MEPs sometimes join the parliament at different times, retire, or are replaced. We include an MEP in a group if they have a record of a vote in the dataset.
 
-\vskip -2em
+%\begin{figure}[!h]
+%\includegraphics[width=\textwidth]{figures/term6.pdf}
+%\caption{Overview of visualisations built on 6th Term voting records. Points are in clusters coloured by group.}
+%\label{fig:allmethods6}
+%\end{figure}
 
-\begin{figure}[!h]
-\includegraphics[width=\textwidth]{figures/term6.pdf}
-\caption{Overview of visualisations built on 6th Term voting records. Points are in clusters coloured by group.}
-\label{fig:allmethods6}
-\end{figure}
+%\vskip 1em
 
-\vskip -2em
+\noindent%
+\begin{minipage}{\linewidth}% to keep image and caption on one page
+\makebox[\linewidth]{%center image
+\includegraphics[width=\textwidth,keepaspectratio=true]{figures/term6.pdf}}
+\captionof{figure}{Overview of visualisations built on 6th Term voting records. Points are in clusters coloured by group.}\label{fig:allmethods6}
+\end{minipage}
+
+%\noindent%
+%\begin{minipage}{\linewidth}% to keep image and caption on one page
+%\makebox[\linewidth]{%center image
+%%%%%%%%%%%%
+%\captionof{figure}{.}\label{}
+%\end{minipage}
+
+%\vskip -2em
 
 \begin{table}[!h]
 \small
 \begin{tabu} to \textwidth {X[m,l] X[m,r] X[m,r] X[m,r] X[m,r] X[m,r] X[m,r]}
 \toprule
-    Group &  MEPs &  wnom &  PCA &  NMF &  tSNE &  SGNS \\
+    Group &  MEPs &  WNOM. &  PCA &  NMF &  t-SNE &  SGNS \\
 \midrule
    EPP-ED &   340 &      43.22 &    139.52 &    108.88 &     144.38 &     101.81 \\
       PES &   264 &      11.14 &    104.53 &     79.22 &      74.27 &      85.12 \\
@@ -210,7 +241,7 @@ The 6th term began in 2004, and ended in 2009. In total there are records for 89
 \bottomrule
 \end{tabu}
 \vskip 1em
-\caption{WGSS: Within Group Scatter, votes from 6th Term. Smaller values indicate that MEPs in a group are close to other group members in the vote space.}
+\caption{$WGSS$: Within Group Scatter, votes from 6th Term. Smaller values indicate that MEPs in a group are close to other group members in the vote space.}
 \label{tbl:6th}
 \end{table}
 
@@ -219,7 +250,7 @@ The 6th term began in 2004, and ended in 2009. In total there are records for 89
 \begin{table}[!h]
 \begin{tabu} to \textwidth {X[m,l] X[m,r] X[m,r] X[m,r] X[m,r] X[m,r] X[m,r]}
 \toprule
-    Group &  MEPs &  wnom &  PCA &  NMF &  tSNE &  SGNS \\
+    Group &  MEPs &  WNOM. &  PCA &  NMF &  t-SNE &  SGNS \\
 \midrule
    EPP-ED &   340 &       4.88 &     64.84 &    124.63 &      84.77 &      71.64 \\
       PES &   264 &     106.88 &     45.62 &     88.63 &     104.96 &       6.75 \\
@@ -232,7 +263,7 @@ The 6th term began in 2004, and ended in 2009. In total there are records for 89
 \bottomrule
 \end{tabu}
 \vskip 1em
-\caption{BGSS - Between Group Scatter, using votes from the 6th Term. Larger values indicate greater separation between clusters of MEPs.}
+\caption{$BGSS$: Between Group Scatter, using votes from the 6th Term. Larger values indicate greater separation between clusters of MEPs.}
 \end{table}
 
 
@@ -240,20 +271,28 @@ The 6th term began in 2004, and ended in 2009. In total there are records for 89
 
 The 7th parliament was elected in 2009 and finished in 2014. Between the 7th and the 6th parliaments there were a number of changes made to groups, including new members and affiliation switches with existing MEPs.
 
-\vskip -2em
+%\vskip -2em
+%\begin{figure}[!h]
+%\includegraphics[width=\textwidth]{figures/term7.pdf}
+%\caption{Overview of visualisations built on 7th Term voting records. Points are in clusters coloured by group.}
+%\label{fig:allmethods7}
+%\end{figure}
 
-\begin{figure}[!h]
-\includegraphics[width=\textwidth]{figures/term7.pdf}
-\caption{Overview of visualisations built on 7th Term voting records. Points are in clusters coloured by group.}
-\label{fig:allmethods7}
-\end{figure}
+\vskip 1em
 
-\vskip -2em
+\noindent%
+\begin{minipage}{\linewidth}% to keep image and caption on one page
+\makebox[\linewidth]{%center image
+\includegraphics[width=\textwidth,keepaspectratio=true]{figures/term7.pdf}}
+\captionof{figure}{Overview of visualisations built on 7th Term voting records. Points are in clusters coloured by group.}\label{fig:allmethods7}
+\end{minipage}
+
+%\vskip -2em
 
 \begin{table}[!h]
 \begin{tabu} to \textwidth {X[m,l] X[m,r] X[m,r] X[m,r] X[m,r] X[m,r] X[m,r]}
 \toprule
-    Group &  MEPs &  wnom &  PCA &  NMF &  tSNE &  SGNS \\
+    Group &  MEPs &  WNOM. &  PCA &  NMF &  t-SNE &  SGNS \\
 \midrule
       EPP &   267 &      12.18 &     41.54 &     36.81 &      49.82 &      68.47 \\
       S\&D &   184 &       6.72 &     26.75 &     23.88 &      27.21 &      32.23 \\
@@ -266,7 +305,7 @@ The 7th parliament was elected in 2009 and finished in 2014. Between the 7th and
 \bottomrule
 \end{tabu}
 \vskip 1em
-\caption{WGSS: Within Group Scatter, votes from 7th Term. Smaller values indicate that MEPs in a group are close to other group members in the vote space.}
+\caption{$WGSS$: Within Group Scatter, votes from 7th Term. Smaller values indicate that MEPs in a group are close to other group members in the vote space.}
 \label{tbl:7th}
 \end{table}
 
@@ -275,7 +314,7 @@ The 7th parliament was elected in 2009 and finished in 2014. Between the 7th and
 \begin{table}[!h]
 \begin{tabu} to \textwidth {X[m,l] X[m,r] X[m,r] X[m,r] X[m,r] X[m,r] X[m,r]}
 \toprule
-    Group &  MEPs &  wnom &  PCA &  NMF &  tSNE &  SGNS \\
+    Group &  MEPs &  WNOM. &  PCA &  NMF &  t-SNE &  SGNS \\
 \midrule
       EPP &   267 &     125.35 &    132.34 &    281.77 &     121.42 &      44.48 \\
       S\&D &   184 &       1.45 &     86.05 &    187.74 &      76.81 &      81.13 \\
@@ -288,7 +327,7 @@ The 7th parliament was elected in 2009 and finished in 2014. Between the 7th and
 \bottomrule
 \end{tabu}
 \vskip 1em
-\caption{BGSS - Between Group Scatter, using votes from the 7th Term. Larger values indicate greater separation between clusters of MEPs.}
+\caption{$BGSS$: Between Group Scatter, using votes from the 7th Term. Larger values indicate greater separation between clusters of MEPs.}
 \end{table}
 
 %\begin{figure}[!h]
